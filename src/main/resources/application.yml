@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: auth-service
+  profiles:
+    active: local
+
+server:
+  port: 9001
+  shutdown: graceful
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${EUREKA_USERNAME}:${EUREKA_PASSWORD}@localhost:8761/eureka
