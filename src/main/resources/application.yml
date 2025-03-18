@@ -3,6 +3,18 @@ spring:
     name: auth-service
   profiles:
     active: local
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_SENDER_USERNAME}
+    password: ${MAIL_APPLICATION_PWD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
 
 server:
   port: 9001
