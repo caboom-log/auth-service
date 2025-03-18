@@ -36,7 +36,7 @@ public class MemberRegisterController {
             throw new IllegalArgumentException("이메일을 입력해 주세요.");
         }
         memberRegisterService.sendVerificationCode(email);
-        return ResponseEntity.ok("인증 코드 발송 완료");
+        return ResponseEntity.status(200).body("인증 코드 발송 완료");
     }
 
     /**
@@ -55,7 +55,7 @@ public class MemberRegisterController {
             throw new IllegalArgumentException("요청 형식이 잘못되었습니다.");
         }
         boolean verified = memberRegisterService.verifyEmail(email, code);
-        return ResponseEntity.ok(Map.of("verified", verified));
+        return ResponseEntity.status(200).body(Map.of("verified", verified));
     }
 
     /**
@@ -80,7 +80,7 @@ public class MemberRegisterController {
         }
         memberRegisterService.register(request);
 
-        return ResponseEntity.ok("회원가입 성공");
+        return ResponseEntity.status(201).body("회원가입 성공");
     }
 
     private boolean isValidEmail(String email) {

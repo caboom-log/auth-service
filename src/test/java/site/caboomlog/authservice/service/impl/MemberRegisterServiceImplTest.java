@@ -73,7 +73,7 @@ class MemberRegisterServiceImplTest {
 
     @Test
     @DisplayName("이메일 인증코드 전송 - 메일 전송중 예외")
-    void sendVerificationCodeFail() throws MessagingException {
+    void sendVerificationCodeFail_SendMail() throws MessagingException {
         // given
         Mockito.when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
         Mockito.when(redisTemplate.opsForValue()).thenReturn(valueOperations);
@@ -106,7 +106,7 @@ class MemberRegisterServiceImplTest {
 
     @Test
     @DisplayName("이메일 인증 실패 - 인증 코드 발급 x")
-    void verifyEmailFail1() {
+    void verifyEmailFail_CodeNotIssued() {
         // given
         Mockito.when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         Mockito.when(valueOperations.get(anyString())).thenReturn(null);
@@ -118,7 +118,7 @@ class MemberRegisterServiceImplTest {
 
     @Test
     @DisplayName("이메일 인증 실패 - 인증 코드 다름")
-    void verifyEmailFail2() {
+    void verifyEmailFail_CodeMismatch() {
         // given
         Mockito.when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         Mockito.when(valueOperations.get(anyString())).thenReturn("bbb777");
@@ -130,7 +130,7 @@ class MemberRegisterServiceImplTest {
 
     @Test
     @DisplayName("회원가입 실패 - 비밀번호 검증 x")
-    void registerFail1() {
+    void registerFail_PasswordConfirm() {
         // given
         RegisterRequest request = new RegisterRequest(
                 "caboom@test.com", "caboom", "asdf1234",
@@ -143,7 +143,7 @@ class MemberRegisterServiceImplTest {
 
     @Test
     @DisplayName("회원가입 실패 - ROLE_OWNER 권한이 DB에 없음")
-    void registerFail2() {
+    void registerFail_DbRole() {
         // given
         RegisterRequest request = new RegisterRequest(
                 "caboom@test.com", "caboom", "asdf1234",
@@ -157,7 +157,7 @@ class MemberRegisterServiceImplTest {
 
     @Test
     @DisplayName("회원가입 실패 - 이메일 중복")
-    void registerFail3() {
+    void registerFail_DuplicateEmail() {
         // given
         RegisterRequest request = new RegisterRequest(
                 "caboom@test.com", "caboom", "asdf1234",
@@ -173,7 +173,7 @@ class MemberRegisterServiceImplTest {
 
     @Test
     @DisplayName("회원가입 실패 - 전화번호 중복")
-    void registerFail4() {
+    void registerFail_DuplicateMobile() {
         // given
         RegisterRequest request = new RegisterRequest(
                 "caboom@test.com", "caboom", "asdf1234",
@@ -190,7 +190,7 @@ class MemberRegisterServiceImplTest {
 
     @Test
     @DisplayName("회원가입 실패 - blog fid 중복")
-    void registerFail5() {
+    void registerFail_DuplicateBlogFid() {
         // given
         RegisterRequest request = new RegisterRequest(
                 "caboom@test.com", "caboom", "asdf1234",

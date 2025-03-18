@@ -15,10 +15,16 @@ spring:
           starttls:
             enable: true
             required: true
+  messages:
+    encoding: UTF-8
 
 server:
   port: 9001
   shutdown: graceful
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
 
 eureka:
   client:

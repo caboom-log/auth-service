@@ -14,15 +14,20 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import site.caboomlog.authservice.dto.RegisterRequest;
+import site.caboomlog.authservice.exception.DuplicateBlogException;
+import site.caboomlog.authservice.exception.DuplicateMemberException;
 import site.caboomlog.authservice.service.MemberRegisterService;
 
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @WebMvcTest(value = MemberRegisterController.class,
@@ -53,7 +58,7 @@ class MemberRegisterControllerTest {
 
     @Test
     @DisplayName("이메일 인증코드 발송 실패 - 잘못된 요청")
-    void sendVerificationCodeFail() throws Exception {
+    void sendVerificationCodeFail_BodyIsBlank() throws Exception {
         mockMvc.perform(post("/auth/send-verification-code")
                 .content(""))
                 .andExpect(status().isBadRequest());
@@ -77,7 +82,7 @@ class MemberRegisterControllerTest {
 
     @Test
     @DisplayName("이메일 인증 실패")
-    void verifyEmailFail1() throws Exception {
+    void verifyEmailFail_CodeMismatch() throws Exception {
         // given
         Map<String, String> request = Map.of("email", "caboom@test.com", "code", "abc123");
         Mockito.when(memberRegisterService.verifyEmail(anyString(), anyString()))
@@ -94,7 +99,7 @@ class MemberRegisterControllerTest {
     @ParameterizedTest
     @MethodSource("verifyEmailFailInputs")
     @DisplayName("이메일 인증 실패 - 잘못된 요청")
-    void verifyEmailFail2(Map<String, String> input) throws Exception {
+    void verifyEmailFail_BadRequest(Map<String, String> input) throws Exception {
         mockMvc.perform(post("/auth/verify-email")
                         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(input)))
@@ -111,5 +116,134 @@ class MemberRegisterControllerTest {
                 );
     }
 
+    @Test
+    @DisplayName("회원가입 성공")
+    void register() throws Exception {
+        // given
+        RegisterRequest request = new RegisterRequest(
+                "caboom@test.com",
+                "세연",
+                "asdf1234",
+                "asdf1234",
+                "010-1234-5678",
+                "caboooom"
+        );
 
+        // when & then
+        mockMvc.perform(post("/auth/register")
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    @DisplayName("회원가입 실패 - 필수 값 누락")
+    void registerFail_MissingFields() throws Exception {
+        // given
+        RegisterRequest request = new RegisterRequest(
+                "",
+                "",
+                "asdf1234",
+                "asdf1234",
+                "010-1234-5678",
+                "caboooom"
+        );
+
+        // when & then
+        mockMvc.perform(post("/auth/register")
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("회원가입 실패 - 비밀번호 불일치")
+    void registerFail_PasswordMismatch() throws Exception {
+        // given
+        RegisterRequest request = new RegisterRequest(
+                "caboom@test.com",
+                "세연",
+                "asdf1234",
+                "aaaa1111",
+                "010-1234-5678",
+                "caboooom"
+        );
+        Mockito.doThrow(IllegalArgumentException.class).when(memberRegisterService).register(any());
+
+        // when & then
+        mockMvc.perform(post("/auth/register")
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("회원가입 실패 - 비밀번호 형식 오류")
+    void registerFail_PasswordFormat() throws Exception {
+        // given
+        RegisterRequest request = new RegisterRequest(
+                "caboom@test.com",
+                "세연",
+                "aaa",
+                "aaa",
+                "010-1234-5678",
+                "caboooom"
+        );
+
+        // when & then
+        mockMvc.perform(post("/auth/register")
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("회원가입 실패 - 이메일 중복")
+    void registerFail_DuplicateEmail() throws Exception {
+        // given
+        RegisterRequest request = new RegisterRequest(
+                "caboom@test.com",
+                "세연",
+                "asdf1234",
+                "asdf1234",
+                "010-1234-5678",
+                "caboooom"
+        );
+
+        doThrow(new DuplicateMemberException("해당 이메일 또는 전화번호를 가진 회원이 이미 존재합니다."))
+                .when(memberRegisterService).register(any());
+
+        // when & then
+        mockMvc.perform(post("/auth/register")
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isConflict())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("회원가입 실패 - 블로그 ID 중복")
+    void registerFail_DuplicateBlogId() throws Exception {
+        // given
+        RegisterRequest request = new RegisterRequest(
+                "caboom@test.com",
+                "세연",
+                "asdf1234",
+                "asdf1234",
+                "010-1234-5678",
+                "caboooom"
+        );
+
+        doThrow(new DuplicateBlogException("해당 fid를 가진 블로그가 이미 존재합니다."))
+                .when(memberRegisterService).register(any());
+
+        // when & then
+        mockMvc.perform(post("/auth/register")
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isConflict())
+                .andDo(print());
+    }
 }
