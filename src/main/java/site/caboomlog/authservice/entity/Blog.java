@@ -30,14 +30,11 @@ public class Blog {
     @Column(name = "blog_name")
     private String blogName;
 
-    @Column(name = "blog_member_nickname")
-    private String blogMbNickname;
-
     @Column(name = "blog_description", columnDefinition = "text")
     private String blogDescription;
 
-    @Column(name = "blog_is_public", columnDefinition = "tinyint")
-    private Boolean blogIsPublic = true;
+    @Column(name = "blog_public", columnDefinition = "tinyint")
+    private Boolean blogPublic = true;
 
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
@@ -46,20 +43,19 @@ public class Blog {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    private Blog(Long blogId, String blogFid, Boolean blogMain, String blogName, String blogMbNickname, String blogDescription, Boolean blogIsPublic, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    private Blog(Long blogId, String blogFid, Boolean blogMain, String blogName,
+                 String blogDescription, Boolean blogPublic, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.blogId = blogId;
         this.blogFid = blogFid;
         this.blogMain = blogMain;
         this.blogName = blogName;
-        this.blogMbNickname = blogMbNickname;
         this.blogDescription = blogDescription;
-        this.blogIsPublic = blogIsPublic;
+        this.blogPublic = blogPublic;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
 
-    public static Blog ofNewBlog(String blogFid, Boolean blogMain, String blogName,
-                                 String blogMbNickname, String blogDescription) {
-        return new Blog(null, blogFid, blogMain, blogName, blogMbNickname, blogDescription, true, null, null);
+    public static Blog ofNewBlog(String blogFid, Boolean blogMain, String blogName, String blogDescription) {
+        return new Blog(null, blogFid, blogMain, blogName, blogDescription, true, null, null);
     }
 }

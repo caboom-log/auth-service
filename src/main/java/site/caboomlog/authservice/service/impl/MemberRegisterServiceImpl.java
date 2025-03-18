@@ -124,18 +124,17 @@ public class MemberRegisterServiceImpl implements MemberRegisterService {
 
         Member member = Member.ofNewMember(
                 request.getEmail(),
-                request.getUsername(),
+                request.getName(),
                 encodeRawPassword(request.getPassword()),
                 request.getMobile()
         );
         Blog blog = Blog.ofNewBlog(
                 request.getBlogFid(),
                 true,
-                request.getUsername() + "'s blog",
-                request.getUsername(),
+                request.getName() + "'s blog",
                 null
         );
-        Optional<Role> roleOwner = roleRepository.findById("ROLE_OWNER");
+        Optional<Role> roleOwner = roleRepository.findByRoleId("ROLE_OWNER");
         if (roleOwner.isEmpty()) {
             log.error("roleRepository.findById(\"ROLE_OWNER\") IS NULL!!");
             throw new ServerErrorException("권한이 존재하지 않음: ROLE_OWNER");
@@ -153,7 +152,7 @@ public class MemberRegisterServiceImpl implements MemberRegisterService {
             memberRepository.save(member);
             blogRepository.save(blog);
             blogMemberMappingRepository.save(
-                    BlogMemberMapping.ofNewBlogMemberMapping(blog, member, roleOwner.get())
+                    BlogMemberMapping.ofNewBlogMemberMapping(blog, member, roleOwner.get(), request.getName())
             );
         } catch (ConstraintViolationException e) {
             throw new DuplicateException("해당 데이터가 이미 존재합니다.", e);
