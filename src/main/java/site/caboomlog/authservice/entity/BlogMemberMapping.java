@@ -22,7 +22,7 @@ public class BlogMemberMapping {
     @ManyToOne(fetch = FetchType.LAZY)
     private Blog blog;
 
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "mb_no")
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
@@ -30,14 +30,18 @@ public class BlogMemberMapping {
     @ManyToOne(fetch = FetchType.LAZY)
     private Role role;
 
-    private BlogMemberMapping(Long blogMemberMappingId, Blog blog, Member member, Role role) {
+    @Column(name = "mb_nickname")
+    private String mbNickname;
+
+    private BlogMemberMapping(Long blogMemberMappingId, Blog blog, Member member, Role role, String mbNickname) {
         this.blogMemberMappingId = blogMemberMappingId;
         this.blog = blog;
         this.member = member;
         this.role = role;
+        this.mbNickname = mbNickname;
     }
 
-    public static BlogMemberMapping ofNewBlogMemberMapping(Blog blog, Member member, Role role) {
-        return new BlogMemberMapping(null, blog, member, role);
+    public static BlogMemberMapping ofNewBlogMemberMapping(Blog blog, Member member, Role role, String mbNickname) {
+        return new BlogMemberMapping(null, blog, member, role, mbNickname);
     }
 }

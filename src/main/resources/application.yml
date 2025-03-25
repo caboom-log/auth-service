@@ -3,6 +3,8 @@ spring:
     name: auth-service
   profiles:
     active: local
+  mvc:
+    dispatch-options-request: false
   mail:
     host: smtp.gmail.com
     port: 587
