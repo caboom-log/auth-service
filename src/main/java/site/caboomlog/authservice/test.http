@@ -1,0 +1,20 @@
+POST localhost:9001/auth/login
+Content-Type: application/json
+
+{
+  "email" : "caboom@test.com",
+  "password" : "asdf1234"
+}
+
+###
+POST localhost/9001/auth/register
+Content-Type: application/json
+
+{
+  "email" : "caboom@test.com",
+  "name" : "세연",
+  "password" : "asdf1234",
+  "password-confirm" : "asdf1234",
+  "mobile" : "010-1234-5678",
+  "blog-fid" : "caboooom"
+}

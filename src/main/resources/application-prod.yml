@@ -11,3 +11,15 @@ token:
 logging:
   level:
     root: info
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url:
+    username:
+    password:
+  data:
+    redis:
+      host:
+      port:
+      password:

@@ -38,6 +38,12 @@ jobs:
           discovery.username: ${{ secrets.DISCOVERY_USERNAME }}
           discovery.password: ${{ secrets.DISCOVERY_PASSWORD }}
           token.secret: ${{ secrets.TOKEN_SECRET }}
+          spring.datasource.url: ${{ secrets.MYSQL_DATASOURCE_URL }}
+          spring.datasource.username: ${{ secrets.MYSQL_USERNAME }}
+          spring.datasource.password: ${{ secrets.SPRING_MAIL_PASSWORD }}
+          spring.data.redis.host: ${{ secrets.REDIS_HOST }}
+          spring.data.redis.port: ${{ secrets.REDIS_PORT }}
+          spring.data.redis.password: ${{ secrets.REDIS_PASSWORD }}
 
       - name: Build with Maven
         run: |
