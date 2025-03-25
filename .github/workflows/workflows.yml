@@ -1,0 +1,72 @@
+name: auth-service ci/cd
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Set application.yml file
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./src/main/resources/application.yml
+        env:
+          spring.mail.username: ${{ secrets.SPRING_MAIL_USERNAME }}
+          spring.mail.password: ${{ secrets.SPRING_MAIL_PASSWORD }}
+
+      - name: Set application-prod.yml file
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./src/main/resources/application-prod.yml
+        env:
+          discovery.host: ${{ secrets.DISCOVERY_HOST }}
+          discovery.port: ${{ secrets.DISCOVERY_PORT }}
+          discovery.username: ${{ secrets.DISCOVERY_USERNAME }}
+          discovery.password: ${{ secrets.DISCOVERY_PASSWORD }}
+          token.secret: ${{ secrets.TOKEN_SECRET }}
+
+      - name: Build with Maven
+        run: |
+          mvn clean package -Dspring.profiles.active=prod
+
+      - name: Log in to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      - name: Build and Push Docker Image
+        run: |
+          IMAGE_NAME=${{ secrets.DOCKER_HUB_USERNAME }}/caboomlog-auth-service:latest
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
+
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /caboomlog
+
+            docker compose stop auth-service || true
+            docker compose rm -f auth-service || true
+
+            docker rmi $(docker images '${{ secrets.DOCKER_HUB_USERNAME }}/caboomlog-auth-service' -q)
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/caboomlog-auth-service:latest
+            
+            docker compose up -d auth-service

@@ -1,0 +1,13 @@
+discovery:
+  host:
+  port:
+  username:
+  password:
+
+token:
+  expiration_time: 600000 # 10 * 60 * 1000
+  secret:
+
+logging:
+  level:
+    root: info

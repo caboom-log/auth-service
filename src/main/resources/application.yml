@@ -8,8 +8,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${MAIL_SENDER_USERNAME}
-    password: ${MAIL_APPLICATION_PWD}
+    username:
+    password:
     properties:
       mail:
         smtp:
@@ -33,4 +33,4 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://${EUREKA_USERNAME}:${EUREKA_PASSWORD}@localhost:8761/eureka
+      defaultZone: http://${discovery.username}:${discovery.password}@${discovery.host}:${discovery.port}/eureka
