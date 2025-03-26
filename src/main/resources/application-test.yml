@@ -11,3 +11,8 @@ spring:
 token:
   expiration_time: 600000 # 10 * 60 * 1000
   secret: test-token-secret
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
