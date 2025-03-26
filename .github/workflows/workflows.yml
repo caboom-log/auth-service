@@ -47,7 +47,7 @@ jobs:
 
       - name: Build with Maven
         run: |
-          mvn clean package -Dspring.profiles.active=test
+          mvn clean package -Dspring.profiles.active=prod
 
       - name: Log in to Docker Hub
         run: |
