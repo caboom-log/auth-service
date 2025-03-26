@@ -33,4 +33,4 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://${discovery.username}:${discovery.password}@${discovery.host}:${discovery.port}/eureka
+      defaultZone:

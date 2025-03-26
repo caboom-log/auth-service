@@ -27,6 +27,7 @@ jobs:
         env:
           spring.mail.username: ${{ secrets.SPRING_MAIL_USERNAME }}
           spring.mail.password: ${{ secrets.SPRING_MAIL_PASSWORD }}
+          eureka.client.service-url.defaultZone: ${{ secrets.EUREKA_SERVICE_URL }}
 
       - name: Set application-prod.yml file
         uses: microsoft/variable-substitution@v1
