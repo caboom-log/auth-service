@@ -15,11 +15,11 @@ logging:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url:
-    username:
-    password:
+    url: jdbc:mysql://0.tcp.jp.ngrok.io:11492/caboomlog
+    username: root
+    password: dlatpdus21!
   data:
     redis:
-      host:
-      port:
-      password:
+      host: 0.tcp.jp.ngrok.io
+      port: 15398
+      password: dlatpdus21!

@@ -1,11 +1,14 @@
 package site.caboomlog.authservice.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import site.caboomlog.authservice.dto.RegisterRequest;
+import site.caboomlog.authservice.dto.SendVerificationCodeRequest;
+import site.caboomlog.authservice.dto.VerifyEmailRequest;
 import site.caboomlog.authservice.service.MemberRegisterService;
 
 import java.util.Map;
@@ -30,12 +33,15 @@ public class MemberRegisterController {
      * @throws IllegalArgumentException 이메일이 비어있거나 형식이 올바르지 않을 경우 발생
      */
     @PostMapping("/auth/send-verification-code")
-    public ResponseEntity<String> sendVerificationCode(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
-        if (email == null) {
-            throw new IllegalArgumentException("이메일을 입력해 주세요.");
+    public ResponseEntity<String> sendVerificationCode(@RequestBody @Validated SendVerificationCodeRequest request,
+                                                       BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            StringBuilder errorMessages = new StringBuilder();
+            bindingResult.getAllErrors().stream()
+                    .forEach(err -> errorMessages.append(err.getDefaultMessage()).append("\n"));
+            throw new IllegalArgumentException(errorMessages.toString());
         }
-        memberRegisterService.sendVerificationCode(email);
+        memberRegisterService.sendVerificationCode(request.getEmail());
         return ResponseEntity.status(200).body("인증 코드 발송 완료");
     }
 
@@ -47,14 +53,15 @@ public class MemberRegisterController {
      * @throws IllegalArgumentException 이메일 또는 코드가 비어있거나 형식이 올바르지 않을 경우 발생
      */
     @PostMapping("/auth/verify-email")
-    public ResponseEntity<Map<String, Boolean>> verifyEmail(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
-        String code = request.get("code");
-        if (email == null || !isValidEmail(email) ||
-                code == null || !isValidCode(code)) {
-            throw new IllegalArgumentException("요청 형식이 잘못되었습니다.");
+    public ResponseEntity<Map<String, Boolean>> verifyEmail(@RequestBody @Validated VerifyEmailRequest request,
+                                                            BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            StringBuilder errorMessages = new StringBuilder();
+            bindingResult.getAllErrors().stream()
+                    .forEach(err -> errorMessages.append(err.getDefaultMessage()).append("\n"));
+            throw new IllegalArgumentException(errorMessages.toString());
         }
-        boolean verified = memberRegisterService.verifyEmail(email, code);
+        boolean verified = memberRegisterService.verifyEmail(request.getEmail(), request.getCode());
         return ResponseEntity.status(200).body(Map.of("verified", verified));
     }
 
@@ -82,19 +89,4 @@ public class MemberRegisterController {
 
         return ResponseEntity.status(201).body("회원가입 성공");
     }
-
-    private boolean isValidEmail(String email) {
-        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
-        Pattern pattern = Pattern.compile(emailRegex);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
-
-    private boolean isValidCode(String code) {
-        String codeRegex = "^[a-zA-Z0-9]{6}$";
-        Pattern pattern = Pattern.compile(codeRegex);
-        Matcher matcher = pattern.matcher(code);
-        return matcher.matches();
-    }
-
 }

@@ -149,7 +149,6 @@ class MemberRegisterServiceImplTest {
                 "caboom@test.com", "caboom", "asdf1234",
                 "asdf1234", "010-0000-1111", "caboom"
         );
-        Mockito.when(roleRepository.findById("ROLE_OWNER")).thenReturn(Optional.empty());
 
         // when & then
         Assertions.assertThrows(ServerErrorException.class, () -> memberRegisterService.register(request));
@@ -164,7 +163,7 @@ class MemberRegisterServiceImplTest {
                 "asdf1234", "010-0000-1111", "caboom"
         );
         Role roleOwner = Role.ofNewRole("ROLE_OWNER", "블로그_소유자", null);
-        Mockito.when(roleRepository.findById("ROLE_OWNER")).thenReturn(Optional.of(roleOwner));
+        Mockito.when(roleRepository.findByRoleId("ROLE_OWNER")).thenReturn(Optional.of(roleOwner));
         Mockito.when(memberRepository.existsByMbEmail(anyString())).thenReturn(true);
 
         // when & then
@@ -180,7 +179,7 @@ class MemberRegisterServiceImplTest {
                 "asdf1234", "010-0000-1111", "caboom"
         );
         Role roleOwner = Role.ofNewRole("ROLE_OWNER", "블로그_소유자", null);
-        Mockito.when(roleRepository.findById("ROLE_OWNER")).thenReturn(Optional.of(roleOwner));
+        Mockito.when(roleRepository.findByRoleId("ROLE_OWNER")).thenReturn(Optional.of(roleOwner));
         Mockito.when(memberRepository.existsByMbEmail(anyString())).thenReturn(false);
         Mockito.when(memberRepository.existsByMbMobile(anyString())).thenReturn(true);
 
@@ -197,7 +196,7 @@ class MemberRegisterServiceImplTest {
                 "asdf1234", "010-0000-1111", "caboom"
         );
         Role roleOwner = Role.ofNewRole("ROLE_OWNER", "블로그_소유자", null);
-        Mockito.when(roleRepository.findById("ROLE_OWNER")).thenReturn(Optional.of(roleOwner));
+        Mockito.when(roleRepository.findByRoleId("ROLE_OWNER")).thenReturn(Optional.of(roleOwner));
         Mockito.when(memberRepository.existsByMbEmail(anyString())).thenReturn(false);
         Mockito.when(memberRepository.existsByMbMobile(anyString())).thenReturn(false);
         Mockito.when(blogRepository.existsByBlogFid(anyString())).thenReturn(true);
@@ -215,7 +214,7 @@ class MemberRegisterServiceImplTest {
                 "asdf1234", "010-0000-1111", "caboom"
         );
         Role roleOwner = Role.ofNewRole("ROLE_OWNER", "블로그_소유자", null);
-        Mockito.when(roleRepository.findById("ROLE_OWNER")).thenReturn(Optional.of(roleOwner));
+        Mockito.when(roleRepository.findByRoleId("ROLE_OWNER")).thenReturn(Optional.of(roleOwner));
         Mockito.when(memberRepository.existsByMbEmail(anyString())).thenReturn(false);
         Mockito.when(memberRepository.existsByMbMobile(anyString())).thenReturn(false);
         Mockito.when(blogRepository.existsByBlogFid(anyString())).thenReturn(false);

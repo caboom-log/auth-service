@@ -9,14 +9,24 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.test.web.servlet.MockMvc;
+import site.caboomlog.authservice.advice.CommonAdvice;
+import site.caboomlog.authservice.advice.MemberRegisterControllerAdvice;
 import site.caboomlog.authservice.dto.RegisterRequest;
+import site.caboomlog.authservice.dto.SendVerificationCodeRequest;
 import site.caboomlog.authservice.exception.DuplicateBlogException;
 import site.caboomlog.authservice.exception.DuplicateMemberException;
+import site.caboomlog.authservice.security.CustomAuthenticationFilter;
 import site.caboomlog.authservice.service.MemberRegisterService;
 
 import java.util.Map;
@@ -30,8 +40,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-@WebMvcTest(value = MemberRegisterController.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(controllers = MemberRegisterController.class,
+        excludeAutoConfiguration = {
+                SecurityAutoConfiguration.class,
+                SecurityFilterAutoConfiguration.class
+        },
+        excludeFilters = {
+                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+                        classes = {
+                                CustomAuthenticationFilter.class
+                        })
+        }
+)
 class MemberRegisterControllerTest {
 
     @Autowired
@@ -42,6 +62,7 @@ class MemberRegisterControllerTest {
 
     @MockBean
     MemberRegisterService memberRegisterService;
+
 
     @Test
     @DisplayName("이메일 인증코드 발송 요청 - 성공")
@@ -60,8 +81,10 @@ class MemberRegisterControllerTest {
     @DisplayName("이메일 인증코드 발송 실패 - 잘못된 요청")
     void sendVerificationCodeFail_BodyIsBlank() throws Exception {
         mockMvc.perform(post("/auth/send-verification-code")
-                .content(""))
-                .andExpect(status().isBadRequest());
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content("{}"))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
     }
 
     @Test
