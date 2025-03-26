@@ -2,7 +2,7 @@ spring:
   application:
     name: auth-service
   profiles:
-    active: prod
+    active: test
   mvc:
     dispatch-options-request: false
   mail:
