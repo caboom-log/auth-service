@@ -1,5 +1,6 @@
 package site.caboomlog.authservice.security;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +35,18 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         log.info("login success: access={}, refresh={}", accessToken, refreshToken);
 
-        String jsonResponse = String.format("{\"accessToken\":\"%s\", \"refreshToken\":\"%s\"}",
-                accessToken, refreshToken);
+        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+//        refreshTokenCookie.setSecure(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(2 * 60 * 60);
+
+        response.addHeader("Set-Cookie", String.format(
+                "refreshToken=%s; Max-Age=%d; Path=/; HttpOnly; Secure; SameSite=Strict",
+                refreshToken, 2 * 60 * 60
+        ));
+
+        String jsonResponse = String.format("{\"token\":\"%s\"}", accessToken);
 
         response.setContentLength(jsonResponse.getBytes(StandardCharsets.UTF_8).length);
         response.setHeader("Connection", "close");
