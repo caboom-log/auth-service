@@ -40,11 +40,6 @@ public class Member {
     @Column(name = "withdrawal_at")
     private LocalDateTime withdrawalAt;
 
-    @PreUpdate
-    public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
-
     private Member(Long mbNo, String mbEmail, String mbName, String mbPassword, String mbMobile,
                    LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime withdrawalAt) {
         this.mbNo = mbNo;
@@ -59,18 +54,5 @@ public class Member {
 
     public static Member ofNewMember(String mbEmail, String mbName, String mbPassword, String mbMobile) {
         return new Member(null, mbEmail, mbName, mbPassword, mbMobile, null, null, null);
-    }
-
-    public void update(String mbName, String mbMobile) {
-        this.mbName = mbName;
-        this.mbMobile = mbMobile;
-    }
-
-    public void updatePassword(String newPassword) {
-        this.mbPassword = newPassword;
-    }
-
-    public void withdraw() {
-        this.withdrawalAt = LocalDateTime.now();
     }
 }

@@ -24,7 +24,7 @@ import site.caboomlog.authservice.security.*;
 public class SecurityConfig {
 
     private final ObjectMapper objectMapper;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenAdaptor jwtTokenAdaptor;
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -43,7 +43,7 @@ public class SecurityConfig {
                 new CustomAuthenticationFilter(
                         authenticationManager,
                         objectMapper,
-                        new CustomAuthenticationSuccessHandler(jwtTokenProvider),
+                        new CustomAuthenticationSuccessHandler(jwtTokenAdaptor),
                         new CustomAuthenticationFailureHandler(objectMapper)
                 );
         customAuthenticationFilter.setFilterProcessesUrl("/auth/login");

@@ -14,16 +14,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.test.web.servlet.MockMvc;
-import site.caboomlog.authservice.advice.CommonAdvice;
-import site.caboomlog.authservice.advice.MemberRegisterControllerAdvice;
 import site.caboomlog.authservice.dto.RegisterRequest;
-import site.caboomlog.authservice.dto.SendVerificationCodeRequest;
 import site.caboomlog.authservice.exception.DuplicateBlogException;
 import site.caboomlog.authservice.exception.DuplicateMemberException;
 import site.caboomlog.authservice.security.CustomAuthenticationFilter;
@@ -38,7 +32,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 
 @WebMvcTest(controllers = MemberRegisterController.class,
         excludeAutoConfiguration = {
