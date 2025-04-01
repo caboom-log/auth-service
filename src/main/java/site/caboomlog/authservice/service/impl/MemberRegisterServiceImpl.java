@@ -132,7 +132,7 @@ public class MemberRegisterServiceImpl implements MemberRegisterService {
                 request.getBlogFid(),
                 true,
                 request.getName() + "'s blog",
-                null
+                String.format("안녕하세요. %s's blog 에 오신 것을 환영합니다.", request.getName())
         );
         Optional<Role> roleOwner = roleRepository.findByRoleId("ROLE_OWNER");
         if (roleOwner.isEmpty()) {
