@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "members")
@@ -17,6 +18,9 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mb_no")
     private Long mbNo;
+
+    @Column(name = "mb_uuid")
+    private String mbUuid;
 
     @Column(name = "mb_email")
     private String mbEmail;
@@ -40,9 +44,10 @@ public class Member {
     @Column(name = "withdrawal_at")
     private LocalDateTime withdrawalAt;
 
-    private Member(Long mbNo, String mbEmail, String mbName, String mbPassword, String mbMobile,
+    private Member(Long mbNo, String mbUuid, String mbEmail, String mbName, String mbPassword, String mbMobile,
                    LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime withdrawalAt) {
         this.mbNo = mbNo;
+        this.mbUuid = UUID.randomUUID().toString();
         this.mbEmail = mbEmail;
         this.mbName = mbName;
         this.mbPassword = mbPassword;
@@ -53,6 +58,6 @@ public class Member {
     }
 
     public static Member ofNewMember(String mbEmail, String mbName, String mbPassword, String mbMobile) {
-        return new Member(null, mbEmail, mbName, mbPassword, mbMobile, null, null, null);
+        return new Member(null, null, mbEmail, mbName, mbPassword, mbMobile, null, null, null);
     }
 }

@@ -26,10 +26,10 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException {
-        Long mbNo = ((PrincipalDetails) authentication.getPrincipal())
-                .getMember().getMbNo();
+        String mbUuid = ((PrincipalDetails) authentication.getPrincipal())
+                .getMember().getMbUuid();
         log.debug("Send request to token-service/token/issue");
-        TokenResponse tokenResponse = jwtTokenAdaptor.issueToken(new TokenIssueRequest(mbNo));
+        TokenResponse tokenResponse = jwtTokenAdaptor.issueToken(new TokenIssueRequest(mbUuid));
         String accessToken = tokenResponse.getAccessToken();
         String refreshToken = tokenResponse.getRefreshToken();
 

@@ -6,5 +6,5 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class TokenIssueRequest {
-    private Long mbNo;
+    private String mbUuid;
 }
