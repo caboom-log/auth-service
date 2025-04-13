@@ -61,7 +61,7 @@ public class MemberRegisterServiceImpl implements MemberRegisterService {
                     <h1>Caboom-log 인증 코드</h1>
                         <p>안녕하세요. 아래 코드를 회원가입 화면에 입력해 주세요.</p>
                         <h2 style='color: blue;'> %s </h2>
-                    """, verificationCode));
+                    """, verificationCode), true);
 
             mailSender.send(message);
         } catch (MessagingException e) {
