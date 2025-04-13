@@ -42,7 +42,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         refreshTokenCookie.setMaxAge(2 * 60 * 60);
 
         response.addHeader("Set-Cookie", String.format(
-                "refreshToken=%s; Max-Age=%d; Path=/; HttpOnly; Secure; SameSite=Strict",
+                "refreshToken=%s; Max-Age=%d; Path=/; HttpOnly; SameSite=Strict",
                 refreshToken, 2 * 60 * 60
         ));
 
