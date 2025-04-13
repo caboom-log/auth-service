@@ -144,7 +144,7 @@ public class MemberRegisterServiceImpl implements MemberRegisterService {
         }
 
         Category category = Category.ofNewCategory(blog, null, null, "카테고리 없음",
-                true, 0,1);
+                true, 0,0);
 
         try {
             memberRepository.save(member);
