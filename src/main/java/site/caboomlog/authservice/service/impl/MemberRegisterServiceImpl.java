@@ -12,15 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.caboomlog.authservice.dto.RegisterRequest;
-import site.caboomlog.authservice.entity.Blog;
-import site.caboomlog.authservice.entity.BlogMemberMapping;
-import site.caboomlog.authservice.entity.Member;
-import site.caboomlog.authservice.entity.Role;
+import site.caboomlog.authservice.entity.*;
 import site.caboomlog.authservice.exception.*;
-import site.caboomlog.authservice.repository.BlogMemberMappingRepository;
-import site.caboomlog.authservice.repository.BlogRepository;
-import site.caboomlog.authservice.repository.MemberRepository;
-import site.caboomlog.authservice.repository.RoleRepository;
+import site.caboomlog.authservice.repository.*;
 import site.caboomlog.authservice.service.MemberRegisterService;
 
 import java.time.Duration;
@@ -39,6 +33,7 @@ public class MemberRegisterServiceImpl implements MemberRegisterService {
     private final BlogRepository blogRepository;
     private final BlogMemberMappingRepository blogMemberMappingRepository;
     private final RoleRepository roleRepository;
+    private final CategoryRepository categoryRepository;
 
     /**
      * 이메일 인증 코드 전송
@@ -148,12 +143,16 @@ public class MemberRegisterServiceImpl implements MemberRegisterService {
             throw new DuplicateBlogException("해당 fid를 가진 블로그가 이미 존재합니다.");
         }
 
+        Category category = Category.ofNewCategory(blog, null, null, "카테고리 없음",
+                true, 0,1);
+
         try {
             memberRepository.save(member);
             blogRepository.save(blog);
             blogMemberMappingRepository.save(
                     BlogMemberMapping.ofNewBlogMemberMapping(blog, member, roleOwner.get(), request.getName())
             );
+            categoryRepository.save(category);
         } catch (ConstraintViolationException e) {
             throw new DuplicateException("해당 데이터가 이미 존재합니다.", e);
         }

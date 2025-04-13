@@ -15,15 +15,9 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import site.caboomlog.authservice.dto.RegisterRequest;
-import site.caboomlog.authservice.entity.Blog;
-import site.caboomlog.authservice.entity.BlogMemberMapping;
-import site.caboomlog.authservice.entity.Member;
-import site.caboomlog.authservice.entity.Role;
+import site.caboomlog.authservice.entity.*;
 import site.caboomlog.authservice.exception.*;
-import site.caboomlog.authservice.repository.BlogMemberMappingRepository;
-import site.caboomlog.authservice.repository.BlogRepository;
-import site.caboomlog.authservice.repository.MemberRepository;
-import site.caboomlog.authservice.repository.RoleRepository;
+import site.caboomlog.authservice.repository.*;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -48,6 +42,8 @@ class MemberRegisterServiceImplTest {
     BlogMemberMappingRepository blogMemberMappingRepository;
     @Mock
     RoleRepository roleRepository;
+    @Mock
+    CategoryRepository categoryRepository;
     @Mock
     MimeMessage mimeMessage;
     @Mock
@@ -226,5 +222,7 @@ class MemberRegisterServiceImplTest {
         Mockito.verify(memberRepository, Mockito.times(1)).save(any(Member.class));
         Mockito.verify(blogRepository, Mockito.times(1)).save(any(Blog.class));
         Mockito.verify(blogMemberMappingRepository, Mockito.times(1)).save(any(BlogMemberMapping.class));
+        Mockito.verify(categoryRepository, Mockito.times(1)).save(any(Category.class));
+
     }
 }
