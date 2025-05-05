@@ -5,6 +5,9 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "blog_member_mappings")
@@ -32,6 +35,10 @@ public class BlogMemberMapping {
 
     @Column(name = "mb_nickname")
     private String mbNickname;
+
+    @Column(name = "created_at")
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     private BlogMemberMapping(Long blogMemberMappingId, Blog blog, Member member, Role role, String mbNickname) {
         this.blogMemberMappingId = blogMemberMappingId;
