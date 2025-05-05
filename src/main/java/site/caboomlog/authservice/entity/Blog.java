@@ -34,7 +34,7 @@ public class Blog {
     private String blogDescription;
 
     @Column(name = "blog_public", columnDefinition = "tinyint")
-    private Boolean blogPublic = true;
+    private Boolean blogPublic = Boolean.TRUE;
 
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
@@ -59,6 +59,6 @@ public class Blog {
     }
 
     public static Blog ofNewBlog(String blogFid, Boolean blogMain, String blogName, String blogDescription) {
-        return new Blog(null, blogFid, blogMain, blogName, blogDescription, true, null, null);
+        return new Blog(null, blogFid, blogMain, blogName, blogDescription, Boolean.TRUE, null, null);
     }
 }
